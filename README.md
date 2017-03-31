@@ -22,7 +22,7 @@ Openstack Registration Site
 +------------+---+          +---+--------+            +---+-----------+    |
              |                  |                         |                |
              |                  |                         |                |
-             |NO                |Disaggree                |                |
+             |NO                |Disagree                 |                |
              |                  |                         v                |
              v                  v                     +---+-----------+    |
 +------------+------------------+--------+            | Display Join  |    |
@@ -33,7 +33,7 @@ Openstack Registration Site
 ```
 
 ### Roles
-* PrincilpleInvestigator (Project)
+* PrincipleInvestigator (Project)
 * TermsSigned (Domain)
 
 ### Project Metadata
@@ -51,3 +51,7 @@ Project metadata will be stored as JSON in the project description field, so bes
 * Create Subnet
 * Create Router
 * Attach Router to Net & Subnet
+
+### Agreeing to Terms
+When agreeing to terms, the system will email the user & a mailbox where we'll store all "signed" copies of terms.
+We'll include some metadata from the shibboleth environment as well as a copy of the terms agreed to.
