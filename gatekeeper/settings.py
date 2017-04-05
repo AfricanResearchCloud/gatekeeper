@@ -74,12 +74,12 @@ WSGI_APPLICATION = 'gatekeeper.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 
 # Password validation
@@ -129,5 +129,10 @@ OS_PROJECT_DOMAIN = os.environ['OS_PROJECT_DOMAIN_NAME']
 
 TERMS_ROLE = 'TermsSigned'
 TERMS_DOMAIN = 'Default'
+USERS_DOMAIN = 'Default'
 PRINCIPLE_INVESTIGATOR_ROLE = 'PrincipleInvestigator'
 TERMS_EMAIL = ''
+SHIB_USER_ATTRIBUTE = 'eppn'
+
+TRIAL_PROJECT_DOMAIN = 'Default'
+TRIAL_PROJECT_PREFIX = 'TRIAL_'
