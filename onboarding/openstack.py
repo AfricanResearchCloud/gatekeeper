@@ -22,6 +22,7 @@ class Openstack(object):
 
         self._TRIAL_PROJECT_DOMAIN = getattr(settings, 'TRIAL_PROJECT_DOMAIN')
         self._TRIAL_PROJECT_PREFIX = getattr(settings, 'TRIAL_PROJECT_PREFIX')
+        self._USER_CREATE_REGEX = getattr(settings, 'USER_CREATE_REGEX')
         self._keystone = self._get_keystone_client()
         self._isExists = False
         if username != None:
@@ -65,18 +66,23 @@ class Openstack(object):
         """
         return self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN)
 
-    def create_user_with_regex_filter(self, email, regex):
+    def create_user_with_regex_filter(self, email):
         """
         Creates a new user after checking username with regex filter
 
         User should have been loaded first with load_user()
         :param str email: Email address to assign to user
-        :param regex regex: Regex to apply to username to determine if create is allowed
         """
-        if re.match(regex, self._username):
+        if self.is_user_create_allowed:
             return self._create_user(email=email)
         else:
             return False
+
+    def is_user_create_allowed():
+        """
+        Checks if username is allowed to be created
+        """
+        return re.match(self._USER_CREATE_REGEX, self._username)
 
     def get_user(self):
         """
