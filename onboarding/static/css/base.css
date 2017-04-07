@@ -1,0 +1,11 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+#terms_well {
+  overflow: auto;
+  margin: 0px 20px
+}

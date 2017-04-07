@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load bootstrap3 %}
+    {% load static %}
+    {% bootstrap_css %}
+    <script src="{% bootstrap_jquery_url %}"></script>
+    {% bootstrap_javascript %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}">
+  </head>
+  <body>
+    <div class="container full-height">
+      <div class="modal-content">
+        <div class="modal-header">
+          <center><h1>GateKeeper</h1></center>
+          <h3>{{title}}</h3>
+          <!--<img src="{% static "img/logo.png" %}" /> -->
+        </div>
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<form>
+  <div class="modal-body">
+      <div id="terms_well" class="well">
+        {{ terms_markdown|safe }}
+      </div>
+    </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="submit">Agree</button>
+    <button class="btn" type="button">Disagree</button>
+  </div>
+</form>
+{% endblock %}

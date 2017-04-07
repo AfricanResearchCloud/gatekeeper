@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'bootstrap3'
+    'bootstrap3',
+    'onboarding'
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,8 @@ USERS_DOMAIN = 'Default'
 PRINCIPLE_INVESTIGATOR_ROLE = 'PrincipleInvestigator'
 TERMS_EMAIL = ''
 SHIB_USER_ATTRIBUTE = 'eppn'
+SHIB_DISPLAY_NAME_ATTRIBUTE = 'displayName'
+SHIB_EMAIL_ATTRIBUTE = 'mail'
 USER_CREATE_REGEX = r"^.*$"
 
 TRIAL_PROJECT_DOMAIN = 'Default'
