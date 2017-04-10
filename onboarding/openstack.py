@@ -3,7 +3,7 @@ from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from keystoneclient.v3 import client
 from keystoneauth1.exceptions.http import NotFound
-
+import re
 
 
 class Openstack(object):
@@ -78,11 +78,11 @@ class Openstack(object):
         else:
             return False
 
-    def is_user_create_allowed():
+    def is_user_create_allowed(self):
         """
         Checks if username is allowed to be created
         """
-        return re.match(self._USER_CREATE_REGEX, self._username)
+        return True if re.match(self._USER_CREATE_REGEX, self._user.name) else False
 
     def get_user(self):
         """
