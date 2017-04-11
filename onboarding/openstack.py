@@ -17,12 +17,12 @@ class Openstack(object):
 
         self._TERMS_ROLE = getattr(settings, 'TERMS_ROLE')
         self._TERMS_DOMAIN = getattr(settings, 'TERMS_DOMAIN')
-
         self._USERS_DOMAIN = getattr(settings, 'USERS_DOMAIN')
-
         self._TRIAL_PROJECT_DOMAIN = getattr(settings, 'TRIAL_PROJECT_DOMAIN')
         self._TRIAL_PROJECT_PREFIX = getattr(settings, 'TRIAL_PROJECT_PREFIX')
         self._USER_CREATE_REGEX = getattr(settings, 'USER_CREATE_REGEX')
+        self._PROJECT_DOMAIN = getattr(settings, 'PROJECT_DOMAIN')
+        self._PRINCIPLE_INVESTIGATOR_ROLE = getattr(settings, 'PRINCIPLE_INVESTIGATOR_ROLE')
         self._keystone = self._get_keystone_client()
         self._isExists = False
         if username != None:
@@ -48,6 +48,7 @@ class Openstack(object):
         :param str username: the name of the user
         """
         self._isExists = False
+        self._username = username
         user_list = self._keystone.users.list(name=username, domain=self._USERS_DOMAIN)
         if len(user_list) == 1:
             self._isExists = True
@@ -64,7 +65,9 @@ class Openstack(object):
         User should have been loaded first with load_user()
         :param str email: Email address to assign to user (usually loaded from environment)
         """
-        return self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN)
+        user = self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN)
+        self.load_user(self._username)
+        return True if user else False
 
     def create_user_with_regex_filter(self, email):
         """
@@ -82,7 +85,7 @@ class Openstack(object):
         """
         Checks if username is allowed to be created
         """
-        return True if re.match(self._USER_CREATE_REGEX, self._user.name) else False
+        return True if re.match(self._USER_CREATE_REGEX, self._username) else False
 
     def get_user(self):
         """
@@ -117,3 +120,30 @@ class Openstack(object):
         trial_project_name = "%s%s" % (self._TRIAL_PROJECT_PREFIX, self._user.name)
         trial_projects_list = self._keystone.projects.list(domain=self._TRIAL_PROJECT_DOMAIN, name=trial_project_name)
         return (len(trial_projects_list) == 1) and (trial_projects_list[0].is_trial == 'True' if hasattr(trial_projects_list[0], 'is_trial') else False)
+
+    def get_project_list(self):
+        """
+        Returns a list of projects
+        """
+        project_list = self._keystone.projects.list(domain=self._PROJECT_DOMAIN)
+        project_return_list = []
+        for project in project_list:
+            if hasattr(project, 'researchField'):
+                project_return_list.append(project)
+        return project_return_list
+
+    def get_project_pi_email(self, project_name):
+        """
+        Returns an email list of PIs for a project
+        :param str project_name: Name of the project to return the pi's of
+        """
+        project = self._keystone.projects.list(name=project_name, domain=self._PROJECT_DOMAIN)
+        role = self._keystone.roles.list(name=self._PRINCIPLE_INVESTIGATOR_ROLE, domain_id=self._PROJECT_DOMAIN)
+        email_addresses = []
+        if (len(project) == 1) and (len(role) == 1):
+            assignments = self._keystone.role_assignments.list(role=role[0], project=project[0])
+            for assignment in assignments:
+                PrincipleInvestigator = self._keystone.users.get(assignment.user['id'])
+                if hasattr(PrincipleInvestigator, 'email'):
+                    email_addresses.append(PrincipleInvestigator.email)
+        return email_addresses

@@ -10,7 +10,7 @@ import os
 import json
 
 SHIB_USER_ATTRIBUTE = getattr(settings, 'SHIB_USER_ATTRIBUTE')
-
+SHIB_EMAIL_ATTRIBUTE = getattr(settings, 'SHIB_EMAIL_ATTRIBUTE')
 
 def index(request):
     #username = request.META.get(SHIB_USER_ATTRIBUTE)
@@ -50,5 +50,29 @@ def getUser(request):
 
 @csrf_exempt
 def getTerms(request):
+    # Need to get more logic here, for institution specific terms...
     terms_markdown = open('onboarding/markdown/terms.md', 'r').read()
     return HttpResponse(markdown.markdown(terms_markdown))
+
+@csrf_exempt
+def createUser(request):
+    username = request.META.get(SHIB_USER_ATTRIBUTE)
+    openstack_client = Openstack(username)
+    user = openstack_client.create_user_with_regex_filter(request.META.get(SHIB_EMAIL_ATTRIBUTE))
+
+@csrf_exempt
+def getWelcome(request):
+    welcome_markdown = open('onboarding/markdown/welcome.md', 'r').read()
+    return HttpResponse(markdown.markdown(welcome_markdown))
+
+def getProjectList(request):
+    openstack_client = Openstack()
+    project_return_list = []
+    for project in openstack_client.get_project_list():
+        project_return_list.append({
+            'Name': project.name,
+            'Description': project.description,
+            'ResearchField': project.researchField,
+            'PrimaryInstitution': project.primaryInstitution if hasattr(project, 'primaryInstitution') else None
+        })
+    return HttpResponse(json.dumps(project_return_list))
