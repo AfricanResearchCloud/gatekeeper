@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'onboarding.dev.middleware.DevMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -134,6 +135,11 @@ USERS_DOMAIN = 'Default'
 PROJECT_DOMAIN = 'Default'
 PRINCIPLE_INVESTIGATOR_ROLE = 'PrincipleInvestigator'
 TERMS_EMAIL = ''
+SMTP_SERVER = ''
+SMTP_PORT = None
+SMTP_TLS = True
+SMTP_USERNAME = ''
+SMTP_PASSWORD = ''
 SHIB_USER_ATTRIBUTE = 'eppn'
 SHIB_DISPLAY_NAME_ATTRIBUTE = 'displayName'
 SHIB_EMAIL_ATTRIBUTE = 'mail'
