@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load bootstrap3 %}
+    {% load static %}
+    {% bootstrap_css %}
+    <script src="{% bootstrap_jquery_url %}"></script>
+    {% bootstrap_javascript %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}">
+    <script src="{% static "js/gatekeeper.js" %}"></script>
+  </head>
+  <body>
+    <div class="container full-height">
+      <div class="modal-content">
+        <div class="modal-header">
+          <center><h1>GateKeeper</h1></center>
+          <h3 id="title"></h3>
+        </div>
+        <div id="termsDiv" class="hidden">
+          <div class="modal-body">
+            <div id="termsText">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default">Disagree</button>
+            <button type="button" class="btn btn-primary" onclick="signTerms();">Agree</button>
+          </div>
+        </div>
+        <div id="sorryDiv" class="hidden">
+          <div class="modal-body">
+            <div id="sorryText">
+            </div>
+          </div>
+          <div class="modal-footer">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="loadingModal">
+      <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          Loading...
+        </div>
+        <div class="modal-body">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  $(function(){
+    onPageLoad();
+  });
+  </script>
+  </body>
+</html>

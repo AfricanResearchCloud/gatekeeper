@@ -5,6 +5,7 @@ from django.template import loader
 from onboarding.openstack import Openstack
 from django.views.decorators.csrf import csrf_exempt
 from onboarding.user import User
+from onboarding.utils import sendemail
 from smtplib import SMTP, SMTP_SSL
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -14,11 +15,7 @@ import json
 
 SHIB_USER_ATTRIBUTE = getattr(settings, 'SHIB_USER_ATTRIBUTE')
 SHIB_EMAIL_ATTRIBUTE = getattr(settings, 'SHIB_EMAIL_ATTRIBUTE')
-SMTP_SERVER = getattr(settings, 'SMTP_SERVER')
-SMTP_PORT = getattr(settings, 'SMTP_PORT')
-SMTP_TLS = getattr(settings, 'SMTP_TLS')
-SMTP_USERNAME = getattr(settings, 'SMTP_USERNAME')
-SMTP_PASSWORD = getattr(settings, 'SMTP_PASSWORD')
+REMOTE_IP_HEADER = getattr(settings, 'REMOTE_IP_HEADER')
 TERMS_EMAIL = getattr(settings, 'TERMS_EMAIL')
 
 def index(request):
@@ -47,41 +44,39 @@ def index(request):
             return HttpResponse("Sorry, no access for you.")
     return HttpResponse("Hello, world. You're at the polls index.")
 
+def new_index(request):
+    template = loader.get_template('onboarding/index.html')
+    return HttpResponse(template.render())
+
 @csrf_exempt
 def signTerms(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
-    smtp = SMTP(SMTP_SERVER, int(SMTP_PORT))
-    if SMTP_TLS:
-        smtp.starttls()
-    smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
-    msg = MIMEMultipart('alternative')
-    msg.attach(MIMEText(open('onboarding/markdown/terms.md', 'r').read(), 'plain'))
-    msg.attach(MIMEText(markdown.markdown(open('onboarding/markdown/terms.md', 'r').read()), 'html'))
-    msg['From'] = TERMS_EMAIL
-    msg['To'] = request.META.get(SHIB_EMAIL_ATTRIBUTE)
-    msg['Bcc'] = TERMS_EMAIL
-    msg['Subject'] = 'Terms Signed'
-    smtp.sendmail(TERMS_EMAIL, request.META.get(SHIB_EMAIL_ATTRIBUTE), msg.as_string())
-    smtp.close()
-    return HttpResponse('Terms Signed now !!')
+    terms_markdown = open('onboarding/markdown/terms.md', 'r').read()
+    add_markdown = "\n###Additional Attributes\n* **Remote IP:** %s \n* **Application ID:** %s \n* **Session ID:** %s \n* **Idenity Provider:** %s" % (request.META.get(REMOTE_IP_HEADER), request.META.get('Shib-Application-ID'), request.META.get('Shib-Session-ID'), request.META.get('Shib-Idenity-Provider'))
+    sendemail(request.META.get(SHIB_EMAIL_ATTRIBUTE), TERMS_EMAIL, terms_markdown + add_markdown, TERMS_EMAIL)
+    openstack_client = Openstack(username)
+    openstack_client.sign_terms()
+    return HttpResponse(json.dumps({'success': True}), content_type="application/json")
 
 @csrf_exempt
 def getUser(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
-    return HttpResponse(json.dumps(User(username)))
+    return HttpResponse(json.dumps(User(username)), content_type="application/json")
 
 @csrf_exempt
 def getTerms(request):
     # Need to get more logic here, for institution specific terms...
     terms_markdown = open('onboarding/markdown/terms.md', 'r').read()
-    return HttpResponse(markdown.markdown(terms_markdown))
+    return HttpResponse(json.dumps({'terms': markdown.markdown(terms_markdown)}), content_type="application/json")
 
 @csrf_exempt
 def createUser(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
     openstack_client = Openstack(username)
+    if openstack_client.is_registered_user():
+        return HttpResponse(json.dumps({'error': 'userExists'}), content_type="application/json")
     user = openstack_client.create_user_with_regex_filter(request.META.get(SHIB_EMAIL_ATTRIBUTE))
-    return HttpResponse(json.dumps(User(username)))
+    return HttpResponse(json.dumps(User(username)), content_type="application/json")
 
 @csrf_exempt
 def createTrialProject(request):
@@ -106,7 +101,12 @@ def getProjectList(request):
             'ResearchField': project.researchField,
             'PrimaryInstitution': project.primaryInstitution if hasattr(project, 'primaryInstitution') else None
         })
-    return HttpResponse(json.dumps(project_return_list))
+    return HttpResponse(json.dumps(project_return_list), content_type="application/json")
+
+@csrf_exempt
+def getNotAllowedCreate(request):
+    not_allowed_markdown = open('onboarding/markdown/not_allowed_create.md', 'r').read()
+    return HttpResponse(json.dumps({'markdown': markdown.markdown(not_allowed_markdown)}), content_type="application/json")
 
 @csrf_exempt
 def requestProjectAccess(request, project_name):

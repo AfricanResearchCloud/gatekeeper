@@ -65,7 +65,7 @@ class Openstack(object):
         User should have been loaded first with load_user()
         :param str email: Email address to assign to user (usually loaded from environment)
         """
-        user = self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN)
+        user = self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN, enabled=False)
         self.load_user(self._username)
         return True if user else False
 
@@ -105,7 +105,7 @@ class Openstack(object):
         """
         if not self._isExists:
             return False
-        role = self._keystone.roles.list(domain=self._TERMS_DOMAIN, name=self._TERMS_ROLE)[0]
+        role = self._keystone.roles.list(domain_id=self._TERMS_DOMAIN, name=self._TERMS_ROLE)[0]
         try:
             return self._keystone.roles.check(role, user=self._user, domain='default')
         except NotFound:
@@ -147,3 +147,14 @@ class Openstack(object):
                 if hasattr(PrincipleInvestigator, 'email'):
                     email_addresses.append(PrincipleInvestigator.email)
         return email_addresses
+
+    def sign_terms(self):
+        """
+        Assign user the signed terms role
+        """
+        domain = self._keystone.domains.list(name=self._TERMS_DOMAIN)
+        role = self._keystone.roles.list(name=self._TERMS_ROLE, domain_id=self._TERMS_DOMAIN)
+        if (len(domain) == 1) and (len(role) == 1):
+            self._keystone.roles.grant(role[0], user=self._user, domain=domain[0])
+            self._keystone.users.update(user=self._user, enabled=True)
+        return
