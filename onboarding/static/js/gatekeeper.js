@@ -1,3 +1,5 @@
+pageLocation = window.location.pathname;
+
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = decodeURIComponent(window.location.search.substring(1)),
         sURLVariables = sPageURL.split('&'),
@@ -15,7 +17,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 function onPageLoad(){
   $('#loadingModal').modal('show');
-  $.get('/getUser', workflow);
+  $.get(pageLocation+'/getUser', workflow);
 };
 
 function workflow(user){
@@ -26,17 +28,17 @@ function workflow(user){
   if (!user.isExists){
     if (user.isCreateAllowed){
       $('#loadingModal').modal('show');
-      $.get('/createUser', userCreated);
+      $.get(pageLocation+'/createUser', userCreated);
     }
     else {
-      $.get('/getNotAllowedCreate', function(data){
+      $.get(pageLocation+'/getNotAllowedCreate', function(data){
         showNotAllowed(data);
       });
     }
   };
   if (user.isExists && !user.isTermsSigned){
     $('#loadingModal').modal('show');
-    $.get('/getTerms', function(data){
+    $.get(pageLocation+'/getTerms', function(data){
       showTerms(user,data);
     });
   }
@@ -44,7 +46,7 @@ function workflow(user){
 
 function userCreated(){
   $('#loadingModal').modal('hide');
-  $.get('/getUser', workflow);
+  $.get(pageLocation+'/getUser', workflow);
 };
 
 function showTerms(user, terms){
@@ -59,5 +61,5 @@ function showNotAllowed(markdown){
 };
 function signTerms(){
   $('#loadingModal').modal('show');
-  $.get('/signTerms', function(){$.get('/getUser', workflow);});
+  $.get(pageLocation+'/signTerms', function(){$.get(pageLocation+'/getUser', workflow);});
 };
