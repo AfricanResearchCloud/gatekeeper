@@ -17,6 +17,7 @@ SHIB_USER_ATTRIBUTE = getattr(settings, 'SHIB_USER_ATTRIBUTE')
 SHIB_EMAIL_ATTRIBUTE = getattr(settings, 'SHIB_EMAIL_ATTRIBUTE')
 REMOTE_IP_HEADER = getattr(settings, 'REMOTE_IP_HEADER')
 TERMS_EMAIL = getattr(settings, 'TERMS_EMAIL')
+BASE_DIR = getattr(settings, 'BASE_DIR')
 
 def index(request):
     #username = request.META.get(SHIB_USER_ATTRIBUTE)
@@ -51,7 +52,7 @@ def new_index(request):
 @csrf_exempt
 def signTerms(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
-    terms_markdown = open('onboarding/markdown/terms.md', 'r').read()
+    terms_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/terms.md'), 'r').read()
     add_markdown = "\n###Additional Attributes\n* **Remote IP:** %s \n* **Application ID:** %s \n* **Session ID:** %s \n* **Idenity Provider:** %s" % (request.META.get(REMOTE_IP_HEADER), request.META.get('Shib-Application-ID'), request.META.get('Shib-Session-ID'), request.META.get('Shib-Idenity-Provider'))
     sendemail(request.META.get(SHIB_EMAIL_ATTRIBUTE), TERMS_EMAIL, terms_markdown + add_markdown, TERMS_EMAIL)
     openstack_client = Openstack(username)
@@ -66,7 +67,7 @@ def getUser(request):
 @csrf_exempt
 def getTerms(request):
     # Need to get more logic here, for institution specific terms...
-    terms_markdown = open('onboarding/markdown/terms.md', 'r').read()
+    terms_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/terms.md'), 'r').read()
     return HttpResponse(json.dumps({'terms': markdown.markdown(terms_markdown)}), content_type="application/json")
 
 @csrf_exempt
@@ -87,7 +88,7 @@ def createTrialProject(request):
 
 @csrf_exempt
 def getWelcome(request):
-    welcome_markdown = open('onboarding/markdown/welcome.md', 'r').read()
+    welcome_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/welcome.md'), 'r').read()
     return HttpResponse(markdown.markdown(welcome_markdown))
 
 @csrf_exempt
@@ -105,7 +106,7 @@ def getProjectList(request):
 
 @csrf_exempt
 def getNotAllowedCreate(request):
-    not_allowed_markdown = open('onboarding/markdown/not_allowed_create.md', 'r').read()
+    not_allowed_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/not_allowed_create.md'), 'r').read()
     return HttpResponse(json.dumps({'markdown': markdown.markdown(not_allowed_markdown)}), content_type="application/json")
 
 @csrf_exempt
