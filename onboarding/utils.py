@@ -4,11 +4,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import markdown
 
-SMTP_SERVER = getattr(settings, 'SMTP_SERVER')
-SMTP_PORT = getattr(settings, 'SMTP_PORT')
-SMTP_TLS = getattr(settings, 'SMTP_TLS')
-SMTP_USERNAME = getattr(settings, 'SMTP_USERNAME')
-SMTP_PASSWORD = getattr(settings, 'SMTP_PASSWORD')
+SMTP_SERVER = settings.SMTP_SERVER
+SMTP_PORT = settings.SMTP_PORT
+SMTP_TLS = settings.SMTP_TLS
+SMTP_USERNAME = settings.SMTP_USERNAME
+SMTP_PASSWORD = settings.SMTP_PASSWORD
 
 def sendemail(to_addr, from_addr, textbody, bcc=None):
     smtp = SMTP(SMTP_SERVER, int(SMTP_PORT))

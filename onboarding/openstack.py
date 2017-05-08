@@ -8,21 +8,21 @@ import re
 
 class Openstack(object):
     def __init__(self, username=None):
-        self._OS_AUTHURL = getattr(settings, 'OS_AUTHURL')
-        self._OS_USERNAME = getattr(settings, 'OS_USERNAME')
-        self._OS_PASSWORD = getattr(settings, 'OS_PASSWORD')
-        self._OS_PROJECT = getattr(settings, 'OS_PROJECT')
-        self._OS_USER_DOMAIN = getattr(settings, 'OS_USER_DOMAIN')
-        self._OS_PROJECT_DOMAIN = getattr(settings, 'OS_PROJECT_DOMAIN')
+        self._OS_AUTHURL = settings.OS_AUTHURL
+        self._OS_USERNAME = settings.OS_USERNAME
+        self._OS_PASSWORD = settings.OS_PASSWORD
+        self._OS_PROJECT = settings.OS_PROJECT
+        self._OS_USER_DOMAIN = settings.OS_USER_DOMAIN
+        self._OS_PROJECT_DOMAIN = settings.OS_PROJECT_DOMAIN
 
-        self._TERMS_ROLE = getattr(settings, 'TERMS_ROLE')
-        self._TERMS_DOMAIN = getattr(settings, 'TERMS_DOMAIN')
-        self._USERS_DOMAIN = getattr(settings, 'USERS_DOMAIN')
-        self._TRIAL_PROJECT_DOMAIN = getattr(settings, 'TRIAL_PROJECT_DOMAIN')
-        self._TRIAL_PROJECT_PREFIX = getattr(settings, 'TRIAL_PROJECT_PREFIX')
-        self._USER_CREATE_REGEX = getattr(settings, 'USER_CREATE_REGEX')
-        self._PROJECT_DOMAIN = getattr(settings, 'PROJECT_DOMAIN')
-        self._PRINCIPLE_INVESTIGATOR_ROLE = getattr(settings, 'PRINCIPLE_INVESTIGATOR_ROLE')
+        self._TERMS_ROLE = settings.TERMS_ROLE
+        self._TERMS_DOMAIN = settings.TERMS_DOMAIN
+        self._USERS_DOMAIN = settings.USERS_DOMAIN
+        self._TRIAL_PROJECT_DOMAIN = settings.TRIAL_PROJECT_DOMAIN
+        self._TRIAL_PROJECT_PREFIX = settings.TRIAL_PROJECT_PREFIX
+        self._USER_CREATE_REGEX = settings.USER_CREATE_REGEX
+        self._PROJECT_DOMAIN = settings.PROJECT_DOMAIN
+        self._PRINCIPLE_INVESTIGATOR_ROLE = settings.PRINCIPLE_INVESTIGATOR_ROLE
         self._keystone = self._get_keystone_client()
         self._isExists = False
         if username != None:
