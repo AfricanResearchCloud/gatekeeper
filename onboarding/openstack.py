@@ -147,6 +147,20 @@ class Openstack(object):
                 if hasattr(PrincipleInvestigator, 'email'):
                     email_addresses.append(PrincipleInvestigator.email)
         return email_addresses
+        
+    def is_project_pi(self, project_name):
+        """
+        Returns whether the current user is a PI for the project
+        :param str project_name: Name of the project to return the pi's of
+        """
+        project = self._keystone.projects.list(name=project_name, domain=self._PROJECT_DOMAIN)
+        role = self._keystone.roles.list(name=self._PRINCIPLE_INVESTIGATOR_ROLE, domain_id=self._PROJECT_DOMAIN)
+        if (len(project) == 1) and (len(role) == 1):
+          try:
+              return self._keystone.roles.check(role[0], user=self._user, project=project[0])
+          except NotFound:
+              return False
+        return False
 
     def sign_terms(self):
         """

@@ -31,6 +31,7 @@ def signTerms(request):
     sendemail(request.META.get(SHIB_EMAIL_ATTRIBUTE), TERMS_EMAIL, terms_markdown + add_markdown, TERMS_EMAIL)
     openstack_client = Openstack(username)
     openstack_client.sign_terms()
+    LOG.info("Terms signed by %s" % (username))
     return HttpResponse(json.dumps({'success': True}), content_type="application/json")
 
 @csrf_exempt
@@ -51,6 +52,7 @@ def createUser(request):
     if openstack_client.is_registered_user():
         return HttpResponse(json.dumps({'error': 'userExists'}), content_type="application/json")
     user = openstack_client.create_user_with_regex_filter(request.META.get(SHIB_EMAIL_ATTRIBUTE))
+    LOG.info("Creating user: %s" % (username))
     return HttpResponse(json.dumps(User(username)), content_type="application/json")
 
 @csrf_exempt
