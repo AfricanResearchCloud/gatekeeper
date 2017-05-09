@@ -1,4 +1,4 @@
-from onboarding.openstack import Openstack
+from gatekeeper.openstack import Openstack
 
 class User(dict):
     def __init__(self, username):

@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
 #    url(r'^admin/', admin.site.urls),
     url(r'^', include('onboarding.urls')),
+    url(r'^allocation', include('allocation.urls'))
 ]

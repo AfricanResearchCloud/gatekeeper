@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.template import loader
-from onboarding.openstack import Openstack
+from gatekeeper.openstack import Openstack
 from django.views.decorators.csrf import csrf_exempt
 from onboarding.user import User
-from onboarding.utils import sendemail
+from gatekeeper.utils import sendemail
 from smtplib import SMTP, SMTP_SSL
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText

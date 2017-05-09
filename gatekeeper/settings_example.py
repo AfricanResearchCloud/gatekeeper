@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
-    'onboarding'
+    'onboarding',
+    'allocation'
 ]
 
 MIDDLEWARE = [
@@ -135,6 +136,7 @@ USERS_DOMAIN = 'Default'
 PROJECT_DOMAIN = 'Default'
 PRINCIPLE_INVESTIGATOR_ROLE = 'PrincipleInvestigator'
 TERMS_EMAIL = ''
+ALLOCATIONS_EMAIL = ''
 SMTP_SERVER = ''
 SMTP_PORT = None
 SMTP_TLS = True
