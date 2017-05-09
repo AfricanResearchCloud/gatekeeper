@@ -9,8 +9,8 @@ Openstack Registration Site
 
 ```
 +----------------+          +-----------------+              +------------------+
-|     User       |  YES     |   User Signed   |     YES      |Redirect To       |
-|     Exists     +--------->+   Terms         +------------->+Openstack         |
+|     User       |  YES     |   User Signed   |     YES      |    Redirect To   |
+|     Exists     +--------->+   Terms         +------------->+    Openstack     |
 +------------+---+          +----+------------+              +-------------+----+
              |                   |                                         ^
              |NO                 |                                         |
@@ -35,6 +35,7 @@ Openstack Registration Site
 ### Roles
 * PrincipleInvestigator (Project)
 * TermsSigned (Domain)
+* AllocationApprover (Domain)
 
 ### Project Metadata
 Project metadata will be stored as JSON in the project description field, so besides the project name which is already stored in keystone the following fields will be added:
