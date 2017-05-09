@@ -85,7 +85,7 @@ class Openstack(object):
         """
         Checks if username is allowed to be created
         """
-        return True if re.match(self._USER_CREATE_REGEX, self._username) else False
+        return True if re.search(self._USER_CREATE_REGEX, self._username) else False
 
     def get_user(self):
         """
