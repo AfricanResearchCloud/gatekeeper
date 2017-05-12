@@ -1,0 +1,6 @@
+{% extends base.html %}
+<strong>Dear {% user.displayName %},</strong>
+{% participant.displayName %} from {% participant.institution %} is requesting access to {% project.name %}.
+To grant access to this project, please click the link below.
+
+<a href="{% applicationUrl%}/allocations/projectAccess/grant/{% project.id %}/{% participant.id %}">Grant Access</a>

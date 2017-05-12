@@ -4,7 +4,7 @@ from django.conf import settings
 from django.template import loader
 from gatekeeper.openstack import Openstack
 from django.views.decorators.csrf import csrf_exempt
-from onboarding.user import User
+from gatekeeper.user import User
 from gatekeeper.utils import sendemail
 from smtplib import SMTP, SMTP_SSL
 from email.mime.multipart import MIMEMultipart
@@ -28,7 +28,7 @@ def signTerms(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
     terms_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/terms.md'), 'r').read()
     add_markdown = "\n###Additional Attributes\n* **Username:** %s \n* **Remote IP:** %s \n* **Application ID:** %s \n* **Session ID:** %s \n* **Idenity Provider:** %s" % (username, request.META.get(REMOTE_IP_HEADER), request.META.get('Shib-Application-ID'), request.META.get('Shib-Session-ID'), request.META.get('Shib-Idenity-Provider'))
-    sendemail(request.META.get(SHIB_EMAIL_ATTRIBUTE), TERMS_EMAIL, terms_markdown + add_markdown, TERMS_EMAIL)
+    sendemail(request.META.get(SHIB_EMAIL_ATTRIBUTE), TERMS_EMAIL, "Terms Signed", terms_markdown + add_markdown, TERMS_EMAIL)
     openstack_client = Openstack(username)
     openstack_client.sign_terms()
     LOG.info("Terms signed by %s" % (username))

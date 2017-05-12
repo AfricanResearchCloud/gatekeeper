@@ -132,35 +132,48 @@ class Openstack(object):
                 project_return_list.append(project)
         return project_return_list
 
-    def get_project_pi_email(self, project_name):
+    def get_project_pi_email(self, project_id):
         """
         Returns an email list of PIs for a project
         :param str project_name: Name of the project to return the pi's of
         """
-        project = self._keystone.projects.list(name=project_name, domain=self._PROJECT_DOMAIN)
+        #project = self._keystone.projects.list(name=project_name, domain=self._PROJECT_DOMAIN)
         role = self._keystone.roles.list(name=self._PRINCIPLE_INVESTIGATOR_ROLE, domain_id=self._PROJECT_DOMAIN)
         email_addresses = []
-        if (len(project) == 1) and (len(role) == 1):
-            assignments = self._keystone.role_assignments.list(role=role[0], project=project[0])
+        #if (len(project) == 1) and (len(role) == 1):
+        if (len(role) == 1):
+            assignments = self._keystone.role_assignments.list(role=role[0], project=project_id)
             for assignment in assignments:
                 PrincipleInvestigator = self._keystone.users.get(assignment.user['id'])
                 if hasattr(PrincipleInvestigator, 'email'):
                     email_addresses.append(PrincipleInvestigator.email)
         return email_addresses
-        
-    def is_project_pi(self, project_name):
+
+    def is_project_pi(self, project_id):
         """
         Returns whether the current user is a PI for the project
-        :param str project_name: Name of the project to return the pi's of
+        :param str project_id: Name of the project to return the pi's of
         """
-        project = self._keystone.projects.list(name=project_name, domain=self._PROJECT_DOMAIN)
+        project = self._keystone.projects.get(project_id)
         role = self._keystone.roles.list(name=self._PRINCIPLE_INVESTIGATOR_ROLE, domain_id=self._PROJECT_DOMAIN)
-        if (len(project) == 1) and (len(role) == 1):
+        if (len(role) == 1):
           try:
-              return self._keystone.roles.check(role[0], user=self._user, project=project[0])
+              return self._keystone.roles.check(role[0], user=self._user, project=project_id)
           except NotFound:
               return False
         return False
+
+    def assign_project_access(self, project_id, user_id):
+        """
+        Assign a user to a project
+        :param str project_id: The ID of the project to grant the user access to
+        :param str user_id: The ID of the user to grant access to
+        """
+        if self.is_project_pi(project_id):
+            #TODO: Assign role to user
+            return True
+        else:
+            return False
 
     def sign_terms(self):
         """
@@ -172,3 +185,15 @@ class Openstack(object):
             self._keystone.roles.grant(role[0], user=self._user, domain=domain[0])
             self._keystone.users.update(user=self._user, enabled=True)
         return
+
+    def get_project(self, project_id):
+        """
+        Return a project from it's id
+        """
+        return self._keystone.projects.get(project_id)
+
+    def get_participant_email(self, participant_id):
+        """
+        Returm the email address of a user based on their id
+        """
+        return self._keystone.users.get(participant_id).email

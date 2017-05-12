@@ -4,6 +4,7 @@ class User(dict):
     def __init__(self, username):
         self['username'] = username
         openstack_client = Openstack(username)
+        self['id'] = openstack_client.get_user().id
         self['isExists'] = openstack_client.is_registered_user()
         self['isTermsSigned'] = openstack_client.is_terms_signed()
         self['isTrialCreated'] = openstack_client.is_trial_created()
