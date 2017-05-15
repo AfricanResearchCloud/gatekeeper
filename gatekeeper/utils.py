@@ -20,16 +20,17 @@ def sendemail(to_addr, from_addr, subject, textbody, bcc=None):
     if SMTP_TLS:
         smtp.starttls()
     smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
-    msg = MIMEMultipart('alternative')
+    msg = MIMEMultipart()
     for filename in next(walk(EMAIL_IMAGE_PATH))[2]:
         fp = open(EMAIL_IMAGE_PATH + filename, 'rb')
         msgImage = MIMEImage(fp.read())
         fp.close()
-        msgImage.add_header('Content-ID', '<' + path.splitext(filename)[0] + '>')
+        msgImage.add_header('Content-ID', '<{}>'.format(path.splitext(filename)[0]))
         msg.attach(msgImage)
         LOG.info("attaching %s with Content-ID %s" % (filename, path.splitext(filename)[0]))
-    msg.attach(MIMEText(textbody, 'plain'))
-    msg.attach(MIMEText(markdown.markdown(textbody), 'html'))
+    #msg.attach(MIMEText(textbody, 'plain'))
+    #msg.attach(MIMEText(markdown.markdown(textbody), 'html'))
+    msg.attach(MIMEText(textbody, 'html'))
     msg['From'] = from_addr
     msg['To'] = ', '.join(to_addr)
     msg['Subject'] = subject

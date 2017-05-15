@@ -3,8 +3,10 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from gatekeeper.openstack import Openstack
+from gatekeeper.user import User
 from gatekeeper.utils import sendemail
 from gatekeeper.project import Project
+from django.template import loader
 import json
 import logging
 
@@ -22,12 +24,14 @@ def getProjectList(request):
 
 @csrf_exempt
 def requestProjectAccess(request, project_id):
-    username = request.META.get(SHIB_USER_ATTRIBUTE)
+    #username = request.META.get(SHIB_USER_ATTRIBUTE)
+    username = 'stefan.coetzee@uct.ac.za'
     openstack_client = Openstack()
     pi_email_addresses = openstack_client.get_project_pi_email(project_id)
     openstack_project = openstack_client.get_project(project_id)
     LOG.info("User %s is requesting access to %s, emailing: %s" %(username, project_id, ','.join(pi_email_addresses)))
-    sendemail(pi_email_addresses, ALLOCATIONS_EMAIL, "Project Access Request - %s" % (openstack_project.name), "TESTY")
+    email_content = loader.get_template("project_access_request.html").render({'title': 'Requestion Project Access', 'user': User(username)})
+    sendemail(pi_email_addresses, ALLOCATIONS_EMAIL, "Project Access Request - %s" % (openstack_project.name), email_content)
     return HttpResponse(json.dumps({'success': True}), content_type="application/json")
 
 @csrf_exempt

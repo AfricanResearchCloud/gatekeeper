@@ -57,7 +57,7 @@ ROOT_URLCONF = 'gatekeeper.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['/etc/gatekeeper/email/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

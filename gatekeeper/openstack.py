@@ -57,7 +57,7 @@ class Openstack(object):
         else:
             return False
 
-    def _create_user(self, email):
+    def _create_user(self, email, displayName):
         """
         Creates a new user in keystone
 
@@ -65,11 +65,11 @@ class Openstack(object):
         User should have been loaded first with load_user()
         :param str email: Email address to assign to user (usually loaded from environment)
         """
-        user = self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN, enabled=False)
+        user = self._keystone.users.create(name=self._username, email=email, domain=self._USERS_DOMAIN, enabled=False, description=displayName)
         self.load_user(self._username)
         return True if user else False
 
-    def create_user_with_regex_filter(self, email):
+    def create_user_with_regex_filter(self, email, displayName):
         """
         Creates a new user after checking username with regex filter
 
@@ -77,7 +77,7 @@ class Openstack(object):
         :param str email: Email address to assign to user
         """
         if self.is_user_create_allowed:
-            return self._create_user(email=email)
+            return self._create_user(email=email, displayName=displayName)
         else:
             return False
 
@@ -196,4 +196,11 @@ class Openstack(object):
         """
         Returm the email address of a user based on their id
         """
-        return self._keystone.users.get(participant_id).email
+        return self.get_participant(participant_id).email
+
+    def get_participant(self, participant_id):
+        """
+        Return a keystone user object for the participant
+        :param str participant_id: id of the user to return
+        """
+        return self._keystone.users.get(participant_id)
