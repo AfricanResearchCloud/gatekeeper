@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+Dear {{ participant.displayName }},
+<p>
+you've been granted access to {{ project.name }}.
+Please log into the dashboard to start making use of project resources.
+</p>
+{% endblock %}

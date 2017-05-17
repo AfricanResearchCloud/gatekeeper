@@ -1,9 +1,11 @@
 from gatekeeper.openstack import Openstack
+import re
 
 class User(dict):
     def __init__(self, username):
         self['username'] = username
         openstack_client = Openstack(username)
+        self['institution'] = re.search(r'\@(.+)$', username).group(1)
         self['id'] = openstack_client.get_user().id
         self['displayName'] = openstack_client.get_user().description
         self['isExists'] = openstack_client.is_registered_user()

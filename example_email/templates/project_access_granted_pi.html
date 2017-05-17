@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+Project access was granted to {{ participant.displayName }} from {{ participant.institution }} to the {{ project.name }} project.
+This was granted by {{ user.displayName }}
+{% endblock %}

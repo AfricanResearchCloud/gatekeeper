@@ -22,6 +22,7 @@ class Openstack(object):
         self._TRIAL_PROJECT_PREFIX = settings.TRIAL_PROJECT_PREFIX
         self._USER_CREATE_REGEX = settings.USER_CREATE_REGEX
         self._PROJECT_DOMAIN = settings.PROJECT_DOMAIN
+        self._PROJECT_MEMBER_ROLE = settings.PROJECT_MEMBER_ROLE
         self._PRINCIPLE_INVESTIGATOR_ROLE = settings.PRINCIPLE_INVESTIGATOR_ROLE
         self._keystone = self._get_keystone_client()
         self._isExists = False
@@ -135,19 +136,28 @@ class Openstack(object):
     def get_project_pi_email(self, project_id):
         """
         Returns an email list of PIs for a project
-        :param str project_name: Name of the project to return the pi's of
+        :param str project_id: ID of the project to return the pi's of
         """
-        #project = self._keystone.projects.list(name=project_name, domain=self._PROJECT_DOMAIN)
-        role = self._keystone.roles.list(name=self._PRINCIPLE_INVESTIGATOR_ROLE, domain_id=self._PROJECT_DOMAIN)
         email_addresses = []
-        #if (len(project) == 1) and (len(role) == 1):
-        if (len(role) == 1):
-            assignments = self._keystone.role_assignments.list(role=role[0], project=project_id)
-            for assignment in assignments:
-                PrincipleInvestigator = self._keystone.users.get(assignment.user['id'])
-                if hasattr(PrincipleInvestigator, 'email'):
-                    email_addresses.append(PrincipleInvestigator.email)
+        principleInvestigators = self.get_project_pis(project_id)
+        for principleInvestigator in principleInvestigators:
+            if hasattr(principleInvestigator, 'email'):
+                email_addresses.append(principleInvestigator.email)
         return email_addresses
+
+    def get_project_pis(self, project_id):
+         """
+         Returns a list of project PIs
+         :param str project_id: ID of the project to return the pi's of
+         """
+         role = self._keystone.roles.list(name=self._PRINCIPLE_INVESTIGATOR_ROLE, domain_id=self._PROJECT_DOMAIN)
+         principleInvestigators = []
+         if (len(role) == 1):
+           assignments = self._keystone.role_assignments.list(role=role[0], project=project_id)
+           for assignment in assignments:
+              principleInvestigator = self._keystone.users.get(assignment.user['id'])
+              principleInvestigators.append(principleInvestigator)
+         return principleInvestigators
 
     def is_project_pi(self, project_id):
         """
@@ -171,7 +181,12 @@ class Openstack(object):
         """
         if self.is_project_pi(project_id):
             #TODO: Assign role to user
-            return True
+            role = self._keystone.roles.list(name=self._PROJECT_MEMBER_ROLE)
+            if (len(role) == 1):
+                self._keystone.roles.grant(role[0], user=user_id, project=project_id)
+                return True
+            else:
+                return False
         else:
             return False
 

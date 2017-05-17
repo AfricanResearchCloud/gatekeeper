@@ -29,7 +29,7 @@ def signTerms(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
     terms_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/terms.md'), 'r').read()
     add_markdown = "\n###Additional Attributes\n* **Username:** %s \n* **Remote IP:** %s \n* **Application ID:** %s \n* **Session ID:** %s \n* **Idenity Provider:** %s" % (username, request.META.get(REMOTE_IP_HEADER), request.META.get('Shib-Application-ID'), request.META.get('Shib-Session-ID'), request.META.get('Shib-Idenity-Provider'))
-    sendemail(request.META.get(SHIB_EMAIL_ATTRIBUTE), TERMS_EMAIL, "Terms Signed", markdown.markdown(terms_markdown + add_markdown), TERMS_EMAIL)
+    sendemail([request.META.get(SHIB_EMAIL_ATTRIBUTE)], TERMS_EMAIL, "Terms Signed", markdown.markdown(terms_markdown + add_markdown), TERMS_EMAIL)
     openstack_client = Openstack(username)
     openstack_client.sign_terms()
     LOG.info("Terms signed by %s" % (username))
@@ -68,19 +68,6 @@ def createTrialProject(request):
 def getWelcome(request):
     welcome_markdown = open(os.path.join(BASE_DIR, 'onboarding/markdown/welcome.md'), 'r').read()
     return HttpResponse(markdown.markdown(welcome_markdown))
-
-#@csrf_exempt
-#def getProjectList(request):
-#    openstack_client = Openstack()
-#    project_return_list = []
-#    for project in openstack_client.get_project_list():
-#        project_return_list.append({
-#            'Name': project.name,
-#            'Description': project.description,
-#            'ResearchField': project.researchField,
-#            'PrimaryInstitution': project.primaryInstitution if hasattr(project, 'primaryInstitution') else None
-#        })
-#    return HttpResponse(json.dumps(project_return_list), content_type="application/json")
 
 @csrf_exempt
 def getNotAllowedCreate(request):
