@@ -148,6 +148,7 @@ TERMS_ROLE = 'TermsSigned'
 TERMS_DOMAIN = 'Default'
 USERS_DOMAIN = 'Default'
 PROJECT_DOMAIN = 'Default'
+PROJECT_EXPIRATION_DAYS = 365
 PROJECT_MEMBER_ROLE = 'Member'
 PRINCIPLE_INVESTIGATOR_ROLE = 'PrincipleInvestigator'
 APPLICATION_BASE_URL = ''
@@ -158,6 +159,7 @@ SMTP_PORT = None
 SMTP_TLS = True
 SMTP_USERNAME = ''
 SMTP_PASSWORD = ''
+
 SHIB_USER_ATTRIBUTE = 'eppn'
 SHIB_DISPLAY_NAME_ATTRIBUTE = 'displayName'
 SHIB_EMAIL_ATTRIBUTE = 'mail'
@@ -167,3 +169,13 @@ REMOTE_IP_HEADER = 'REMOTE_ADDR'
 
 TRIAL_PROJECT_DOMAIN = 'Default'
 TRIAL_PROJECT_PREFIX = 'TRIAL_'
+TRIAL_CREATE_REGEX = r"^.*$"
+TRAIL_EXPIRATION_DAYS = 90
+TRAIL_PROJECT_QUOTAS = {
+    'cores': 2,
+    'ram': 8192,
+    'floating-ips': 3,
+    'instances': 2,
+    'volumes': 0,
+    'gigabytes': 0
+}

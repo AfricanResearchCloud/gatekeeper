@@ -73,7 +73,7 @@ def grantProjectAccess(request, project_id, participant):
 @csrf_exempt
 def createTrialProject(request):
     username = request.META.get(SHIB_USER_ATTRIBUTE)
-    
+
     return None
 
 @csrf_exempt
